@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:id="@+id/rl_title"
+            android:layout_width="match_parent"
+            android:layout_height="100dp">
+
+            <View
+                android:id="@+id/v_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:background="@color/colorPrimaryDark" />
+
+            <TextView
+                android:id="@+id/tv_title_movie"
+                android:text="Title"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:textSize="25sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:maxLines="1"
+                android:layout_alignParentBottom="true"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/rl_title"
+            android:padding="16dp">
+
+            <ImageView
+                android:id="@+id/iv_poster_movie"
+                android:layout_alignParentTop="true"
+                android:layout_width="150dp"
+                android:layout_height="220dp"/>
+
+            <TextView
+                android:id="@+id/tv_year_movie"
+                android:text="2017"
+                android:textSize="25sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/iv_poster_movie"
+                android:layout_marginLeft="12dp"/>
+
+            <TextView
+                android:id="@+id/tv_durasi_movie"
+                android:text="120min"
+                android:textSize="16sp"
+                android:textStyle="italic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/iv_poster_movie"
+                android:layout_below="@id/tv_year_movie"
+                android:layout_marginLeft="12dp"/>
+
+            <Button
+                android:id="@+id/btn_favorite"
+                android:text="Mark as favorite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="12dp"
+                android:layout_toRightOf="@id/iv_poster_movie"
+                android:layout_alignBottom="@id/iv_poster_movie" />
+
+            <TextView
+                android:id="@+id/tv_vote_movie"
+                android:text="8.9"
+                android:textSize="16sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/iv_poster_movie"
+                android:layout_above="@id/btn_favorite"
+                android:layout_marginLeft="12dp"
+                android:layout_marginBottom="12dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=" / 10"
+                android:textSize="16sp"
+                android:layout_toRightOf="@id/tv_vote_movie"
+                android:layout_alignTop="@id/tv_vote_movie"/>
+
+            <TextView
+                android:id="@+id/tv_sinopsis_movie"
+                android:text="Loading . . ."
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/iv_poster_movie"
+                android:layout_marginTop="16dp"/>
+
+            <View
+                android:id="@+id/div_line"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/colorPrimaryDark"
+                android:layout_below="@id/tv_sinopsis_movie"
+                android:layout_marginTop="16dp"/>
+
+            <ListView
+                android:id="@+id/lv_video"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/div_line"
+                android:layout_marginTop="4dp">
+
+            </ListView>
+
+        </RelativeLayout>
+    </RelativeLayout>
+    </ScrollView>
+</LinearLayout>
