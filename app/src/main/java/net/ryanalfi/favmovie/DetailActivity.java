@@ -1,12 +1,12 @@
 package net.ryanalfi.favmovie;
 
+import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -21,7 +21,6 @@ import net.ryanalfi.favmovie.REST.ApiClient;
 import net.ryanalfi.favmovie.REST.ApiInterface;
 import net.ryanalfi.favmovie.adapters.ListAdapter;
 import net.ryanalfi.favmovie.models.MovieDetailRespone;
-import net.ryanalfi.favmovie.models.MovieRespone;
 import net.ryanalfi.favmovie.models.Video;
 import net.ryanalfi.favmovie.models.VideoRespone;
 
@@ -63,6 +62,8 @@ public class DetailActivity extends AppCompatActivity {
     ListView lvVideo;
 
     private final static String API_KEY = "1c96b66dba8d2788bc3760b972f76331";
+    @BindView(R.id.btn_unfavorite)
+    Button btnUnfavorite;
 
     private String mTitle, mPosterUrl, mYear, mSinopsis;
     private int idMovie, mDurasi;
@@ -74,8 +75,12 @@ public class DetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detail);
         ButterKnife.bind(this);
 
+        final ProgressDialog dialog = ProgressDialog.show(DetailActivity.this, "",
+                "Loading. Please wait...", true);
+        dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+
         Intent intent = getIntent();
-        idMovie = intent.getIntExtra("idMovie",0);
+        idMovie = intent.getIntExtra("idMovie", 0);
 
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
         Call<MovieDetailRespone> call = apiService.getMovieDetails(idMovie, API_KEY);
@@ -89,6 +94,7 @@ public class DetailActivity extends AppCompatActivity {
                 mVoteAverage = response.body().getVote();
                 mSinopsis = response.body().getSinopsis();
 
+                dialog.dismiss();
                 setupView();
             }
 
@@ -98,34 +104,13 @@ public class DetailActivity extends AppCompatActivity {
             }
         });
 
-        Call<VideoRespone> callVideo = apiService.getListVideos(idMovie,API_KEY);
+        Call<VideoRespone> callVideo = apiService.getListVideos(idMovie, API_KEY);
         callVideo.enqueue(new Callback<VideoRespone>() {
             @Override
             public void onResponse(Call<VideoRespone> call, Response<VideoRespone> response) {
                 final List<Video> videos = response.body().getResults();
 
                 ListAdapter list = new ListAdapter(videos, DetailActivity.this);
-                lvVideo.setOnTouchListener(new ListView.OnTouchListener(){
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        int action = event.getAction();
-                        switch (action) {
-                            case MotionEvent.ACTION_DOWN:
-                                // Disallow ScrollView to intercept touch events.
-                                v.getParent().requestDisallowInterceptTouchEvent(true);
-                                break;
-
-                            case MotionEvent.ACTION_UP:
-                                // Allow ScrollView to intercept touch events.
-                                v.getParent().requestDisallowInterceptTouchEvent(false);
-                                break;
-                        }
-
-                        // Handle ListView touch events.
-                        v.onTouchEvent(event);
-                        return true;
-                    }
-                });
                 lvVideo.setAdapter(list);
 
                 lvVideo.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -133,7 +118,7 @@ public class DetailActivity extends AppCompatActivity {
                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                         Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + videos.get(i).getVid_key()));
                         Intent webIntent = new Intent(Intent.ACTION_VIEW,
-                                Uri.parse("http://www.youtube.com/watch?v=" +  videos.get(i).getVid_key()));
+                                Uri.parse("http://www.youtube.com/watch?v=" + videos.get(i).getVid_key()));
                         try {
                             startActivity(appIntent);
                         } catch (ActivityNotFoundException ex) {
@@ -152,10 +137,13 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     public void setupView() {
-        Glide.with(DetailActivity.this).load("http://image.tmdb.org/t/p/w185/" + mPosterUrl).override(200,300).centerCrop().into(ivPosterMovie);
+        Glide.with(DetailActivity.this).load("http://image.tmdb.org/t/p/w185/" + mPosterUrl).override(200, 300).centerCrop().into(ivPosterMovie);
         tvTitleMovie.setText(mTitle);
-        tvYearMovie.setText(mYear);
-        tvDurasiMovie.setText(String.valueOf(mDurasi));
+
+        String[] justYear = mYear.split("-");
+        tvYearMovie.setText(justYear[0]);
+
+        tvDurasiMovie.setText(String.valueOf(mDurasi) + "min");
         tvVoteMovie.setText(String.valueOf(mVoteAverage));
         tvSinopsisMovie.setText(mSinopsis);
 
@@ -163,5 +151,9 @@ public class DetailActivity extends AppCompatActivity {
 
     @OnClick(R.id.btn_favorite)
     public void onViewClicked() {
+    }
+
+    @OnClick(R.id.btn_unfavorite)
+    public void onViewUnClicked() {
     }
 }

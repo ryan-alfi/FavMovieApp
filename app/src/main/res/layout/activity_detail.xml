@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:focusableInTouchMode="true">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -26,7 +27,7 @@
 
             <TextView
                 android:id="@+id/tv_title_movie"
-                android:text="Title"
+                android:text=""
                 android:textColor="#FFFFFF"
                 android:textStyle="bold"
                 android:textSize="25sp"
@@ -53,7 +54,7 @@
 
             <TextView
                 android:id="@+id/tv_year_movie"
-                android:text="2017"
+                android:text=""
                 android:textSize="25sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -62,7 +63,7 @@
 
             <TextView
                 android:id="@+id/tv_durasi_movie"
-                android:text="120min"
+                android:text=""
                 android:textSize="16sp"
                 android:textStyle="italic"
                 android:layout_width="wrap_content"
@@ -78,11 +79,26 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="12dp"
                 android:layout_toRightOf="@id/iv_poster_movie"
-                android:layout_alignBottom="@id/iv_poster_movie" />
+                android:layout_alignBottom="@id/iv_poster_movie"
+                />
+
+            <Button
+                android:id="@+id/btn_unfavorite"
+                android:text=" Favorited"
+                android:textColor="@color/colorPrimary_light"
+                android:background="@color/colorAccent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="12dp"
+                android:padding="10dp"
+                android:drawableLeft="@drawable/ic_favorite"
+                android:layout_toRightOf="@id/iv_poster_movie"
+                android:layout_alignBottom="@id/iv_poster_movie"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/tv_vote_movie"
-                android:text="8.9"
+                android:text=""
                 android:textSize="16sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -115,14 +131,14 @@
                 android:layout_below="@id/tv_sinopsis_movie"
                 android:layout_marginTop="16dp"/>
 
-            <ListView
+            <net.ryanalfi.favmovie.adapters.NonScrollListView
                 android:id="@+id/lv_video"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/div_line"
                 android:layout_marginTop="4dp">
 
-            </ListView>
+            </net.ryanalfi.favmovie.adapters.NonScrollListView>
 
         </RelativeLayout>
     </RelativeLayout>

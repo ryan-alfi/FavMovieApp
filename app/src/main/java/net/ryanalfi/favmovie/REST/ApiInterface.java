@@ -22,4 +22,7 @@ public interface ApiInterface {
 
     @GET("movie/{id}/videos")
     Call<VideoRespone> getListVideos(@Path("id") int id, @Query("api_key") String apiKey);
+
+    @GET("movie/popular")
+    Call<MovieRespone> getPopularMovies(@Query("api_key") String apiKey);
 }
