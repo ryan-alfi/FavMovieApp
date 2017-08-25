@@ -20,6 +20,7 @@ import com.bumptech.glide.Glide;
 import net.ryanalfi.favmovie.REST.ApiClient;
 import net.ryanalfi.favmovie.REST.ApiInterface;
 import net.ryanalfi.favmovie.adapters.ListAdapter;
+import net.ryanalfi.favmovie.database.DatabaseHandler;
 import net.ryanalfi.favmovie.models.MovieDetailRespone;
 import net.ryanalfi.favmovie.models.Video;
 import net.ryanalfi.favmovie.models.VideoRespone;
@@ -149,8 +150,12 @@ public class DetailActivity extends AppCompatActivity {
 
     }
 
+
     @OnClick(R.id.btn_favorite)
     public void onViewClicked() {
+        DatabaseHandler db = new DatabaseHandler(DetailActivity.this);
+
+        db.addFavoriteToDB(idMovie);
     }
 
     @OnClick(R.id.btn_unfavorite)
