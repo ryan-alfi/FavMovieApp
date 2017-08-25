@@ -5,18 +5,11 @@ package net.ryanalfi.favmovie.database;
  */
 
 public class Myfavmovie {
-    private int id;
     private int idmovie;
     private String statemovie;
 
     public Myfavmovie(){
 
-    }
-
-    public Myfavmovie(int id, int idmovie, String statemovie) {
-        this.id = id;
-        this.idmovie = idmovie;
-        this.statemovie = statemovie;
     }
 
     public Myfavmovie(int idmovie, String statemovie) {
@@ -32,13 +25,6 @@ public class Myfavmovie {
         this.statemovie = statemovie;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public int getIdmovie() {
         return idmovie;

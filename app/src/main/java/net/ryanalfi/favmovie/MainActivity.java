@@ -15,6 +15,7 @@ import android.widget.Toast;
 import net.ryanalfi.favmovie.REST.ApiClient;
 import net.ryanalfi.favmovie.REST.ApiInterface;
 import net.ryanalfi.favmovie.adapters.DataAdapter;
+import net.ryanalfi.favmovie.database.DatabaseHandler;
 import net.ryanalfi.favmovie.models.Movie;
 import net.ryanalfi.favmovie.models.MovieRespone;
 
@@ -28,6 +29,7 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity implements DataAdapter.ListItemClickListener {
 
     private final static String API_KEY = "1c96b66dba8d2788bc3760b972f76331";
+    private DatabaseHandler db = new DatabaseHandler(MainActivity.this);
     private ProgressBar progressBar;
     private Toast mToast;
     private ApiInterface apiService;
@@ -44,6 +46,15 @@ public class MainActivity extends AppCompatActivity implements DataAdapter.ListI
 
         apiService = ApiClient.getClient().create(ApiInterface.class);
 
+        if (isPopular)
+            setupRemoteTopRated();
+        else
+            setupRemotePopular();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         if (isPopular)
             setupRemoteTopRated();
         else
@@ -103,8 +114,9 @@ public class MainActivity extends AppCompatActivity implements DataAdapter.ListI
                 RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getApplicationContext(),2);
                 recyclerView.setLayoutManager(layoutManager);
 
+                int[] myFavoriteMovie=  db.getAllFavMovieId();
                 List<Movie> arrMovie = response.body().getResults();
-                DataAdapter adapter = new DataAdapter(arrMovie, getApplicationContext(), MainActivity.this);
+                DataAdapter adapter = new DataAdapter(arrMovie, myFavoriteMovie, getApplicationContext(), MainActivity.this);
                 recyclerView.setAdapter(adapter);
             }
 
@@ -132,8 +144,9 @@ public class MainActivity extends AppCompatActivity implements DataAdapter.ListI
                 RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getApplicationContext(),2);
                 recyclerView.setLayoutManager(layoutManager);
 
+                int[] myFavoriteMovie=  db.getAllFavMovieId();
                 List<Movie> arrMovie = response.body().getResults();
-                DataAdapter adapter = new DataAdapter(arrMovie, getApplicationContext(), MainActivity.this);
+                DataAdapter adapter = new DataAdapter(arrMovie, myFavoriteMovie, getApplicationContext(), MainActivity.this);
                 recyclerView.setAdapter(adapter);
             }
 

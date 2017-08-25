@@ -21,4 +21,14 @@
         android:textColor="#FFFFFF"
         android:textStyle="bold" />
 
+    <ImageView
+        android:id="@+id/img_favorite_main"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="16dp"
+        android:src="@drawable/ic_like"
+        android:visibility="gone"/>
+
 </RelativeLayout>

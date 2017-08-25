@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -21,6 +22,7 @@ import net.ryanalfi.favmovie.REST.ApiClient;
 import net.ryanalfi.favmovie.REST.ApiInterface;
 import net.ryanalfi.favmovie.adapters.ListAdapter;
 import net.ryanalfi.favmovie.database.DatabaseHandler;
+import net.ryanalfi.favmovie.database.Myfavmovie;
 import net.ryanalfi.favmovie.models.MovieDetailRespone;
 import net.ryanalfi.favmovie.models.Video;
 import net.ryanalfi.favmovie.models.VideoRespone;
@@ -63,6 +65,7 @@ public class DetailActivity extends AppCompatActivity {
     ListView lvVideo;
 
     private final static String API_KEY = "1c96b66dba8d2788bc3760b972f76331";
+    private DatabaseHandler db = new DatabaseHandler(DetailActivity.this);
     @BindView(R.id.btn_unfavorite)
     Button btnUnfavorite;
 
@@ -135,6 +138,15 @@ public class DetailActivity extends AppCompatActivity {
             }
         });
 
+        // Reading all contacts
+        Log.d("Reading: ", "Reading all contacts..");
+        List<Myfavmovie> contacts = db.getAllFavMovie();
+
+        for (Myfavmovie cn : contacts) {
+            String log = "MovieId: " + cn.getIdmovie() + " ,State: " + cn.getStatemovie();
+            // Writing Contacts to log
+            Log.d("thisisit: ", log);
+        }
     }
 
     public void setupView() {
@@ -148,17 +160,42 @@ public class DetailActivity extends AppCompatActivity {
         tvVoteMovie.setText(String.valueOf(mVoteAverage));
         tvSinopsisMovie.setText(mSinopsis);
 
+        if (isFavMovie(idMovie)){
+            btnFavorite.setVisibility(View.GONE);
+            btnUnfavorite.setVisibility(View.VISIBLE);
+        }else{
+            btnUnfavorite.setVisibility(View.GONE);
+            btnFavorite.setVisibility(View.VISIBLE);
+        }
+
     }
 
+    public boolean isFavMovie(int id){
+        Myfavmovie favorite = db.getFavMovie(id);
+        if (favorite != null) {
+
+            String state = favorite.getStatemovie();
+            if (state.equalsIgnoreCase("true")) {
+                return true;
+            } else {
+                return false;
+            }
+        }else{
+            return false;
+        }
+    }
 
     @OnClick(R.id.btn_favorite)
     public void onViewClicked() {
-        DatabaseHandler db = new DatabaseHandler(DetailActivity.this);
-
-        db.addFavoriteToDB(idMovie);
+         db.addFavoriteToDB(idMovie);
+        btnFavorite.setVisibility(View.GONE);
+        btnUnfavorite.setVisibility(View.VISIBLE);
     }
 
     @OnClick(R.id.btn_unfavorite)
     public void onViewUnClicked() {
+        db.deleteFavMovie(idMovie);
+        btnUnfavorite.setVisibility(View.GONE);
+        btnFavorite.setVisibility(View.VISIBLE);
     }
 }

@@ -14,6 +14,7 @@ import net.ryanalfi.favmovie.R;
 import net.ryanalfi.favmovie.models.Movie;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -23,12 +24,14 @@ import java.util.List;
 public class DataAdapter extends RecyclerView.Adapter<DataAdapter.ViewHolder> {
 
     private List<Movie> mMoview;
+    private int[] arrFavorite;
     private Context context;
     final private ListItemClickListener mOnClickListener;
 
-    public DataAdapter(List<Movie> mMoview, Context context, ListItemClickListener listener) {
+    public DataAdapter(List<Movie> mMoview,int[] arrFavorite, Context context, ListItemClickListener listener) {
         this.mMoview = mMoview;
         this.context = context;
+        this.arrFavorite = arrFavorite;
         this.mOnClickListener = listener;
     }
 
@@ -42,6 +45,12 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.ViewHolder> {
     public void onBindViewHolder(DataAdapter.ViewHolder holder, int position) {
         holder.tv_title.setText(mMoview.get(position).getMovie_title());
         Glide.with(context).load(mMoview.get(position).getMovie_poster()).override(200,300).centerCrop().into(holder.img_poster);
+
+        if (useLoop(arrFavorite,mMoview.get(position).getMovie_id())){
+            holder.img_favorite.setVisibility(View.VISIBLE);
+        }else{
+            holder.img_favorite.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -52,11 +61,13 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.ViewHolder> {
     public class ViewHolder extends RecyclerView.ViewHolder implements RecyclerView.OnClickListener {
         private TextView tv_title;
         private ImageView img_poster;
+        private ImageView img_favorite;
         public ViewHolder(View view){
             super(view);
 
             tv_title = (TextView)view.findViewById(R.id.tv_title);
             img_poster = (ImageView)view.findViewById(R.id.img_poster);
+            img_favorite = (ImageView)view.findViewById(R.id.img_favorite_main);
             view.setOnClickListener(this);
         }
 
@@ -69,5 +80,13 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.ViewHolder> {
 
     public interface ListItemClickListener {
         void onListItemClick(int clickedItemIndex);
+    }
+
+    public static boolean useLoop(int[] arr, int targetValue) {
+        for(int s: arr){
+            if(s==targetValue)
+                return true;
+        }
+        return false;
     }
 }
