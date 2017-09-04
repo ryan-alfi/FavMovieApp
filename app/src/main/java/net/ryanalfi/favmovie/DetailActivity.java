@@ -6,6 +6,12 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -23,10 +29,13 @@ import net.ryanalfi.favmovie.REST.ApiInterface;
 import net.ryanalfi.favmovie.adapters.ListAdapter;
 import net.ryanalfi.favmovie.database.DatabaseHandler;
 import net.ryanalfi.favmovie.database.Myfavmovie;
+import net.ryanalfi.favmovie.fragment.ReviewsFragment;
+import net.ryanalfi.favmovie.fragment.VideosFragment;
 import net.ryanalfi.favmovie.models.MovieDetailRespone;
 import net.ryanalfi.favmovie.models.Video;
 import net.ryanalfi.favmovie.models.VideoRespone;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -65,6 +74,10 @@ public class DetailActivity extends AppCompatActivity {
     ListView lvVideo;
 
     private final static String API_KEY = "1c96b66dba8d2788bc3760b972f76331";
+    @BindView(R.id.pager_header)
+    TabLayout pagerHeader;
+    @BindView(R.id.pager)
+    ViewPager pager;
     private DatabaseHandler db = new DatabaseHandler(DetailActivity.this);
     @BindView(R.id.btn_unfavorite)
     Button btnUnfavorite;
@@ -79,12 +92,30 @@ public class DetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detail);
         ButterKnife.bind(this);
 
+        Intent intent = getIntent();
+        idMovie = intent.getIntExtra("idMovie", 0);
+
         final ProgressDialog dialog = ProgressDialog.show(DetailActivity.this, "",
                 "Loading. Please wait...", true);
         dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 
-        Intent intent = getIntent();
-        idMovie = intent.getIntExtra("idMovie", 0);
+        Bundle bundle = new Bundle();
+        bundle.putInt("id_movie", idMovie);
+        bundle.putString("APIKEY", API_KEY);
+
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+
+        VideosFragment videosF = new VideosFragment();
+        videosF.setArguments(bundle);
+        ReviewsFragment reviewsF = new ReviewsFragment();
+        reviewsF.setArguments(bundle);
+
+        adapter.addFragment(videosF, "Videos");
+        adapter.addFragment(reviewsF, "Reviews");
+
+        pager.setAdapter(adapter);
+
+        pagerHeader.setupWithViewPager(pager);
 
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
         Call<MovieDetailRespone> call = apiService.getMovieDetails(idMovie, API_KEY);
@@ -115,21 +146,21 @@ public class DetailActivity extends AppCompatActivity {
                 final List<Video> videos = response.body().getResults();
 
                 ListAdapter list = new ListAdapter(videos, DetailActivity.this);
-                lvVideo.setAdapter(list);
-
-                lvVideo.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                        Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + videos.get(i).getVid_key()));
-                        Intent webIntent = new Intent(Intent.ACTION_VIEW,
-                                Uri.parse("http://www.youtube.com/watch?v=" + videos.get(i).getVid_key()));
-                        try {
-                            startActivity(appIntent);
-                        } catch (ActivityNotFoundException ex) {
-                            startActivity(webIntent);
-                        }
-                    }
-                });
+//                lvVideo.setAdapter(list);
+//
+//                lvVideo.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//                    @Override
+//                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+//                        Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + videos.get(i).getVid_key()));
+//                        Intent webIntent = new Intent(Intent.ACTION_VIEW,
+//                                Uri.parse("http://www.youtube.com/watch?v=" + videos.get(i).getVid_key()));
+//                        try {
+//                            startActivity(appIntent);
+//                        } catch (ActivityNotFoundException ex) {
+//                            startActivity(webIntent);
+//                        }
+//                    }
+//                });
             }
 
             @Override
@@ -160,17 +191,17 @@ public class DetailActivity extends AppCompatActivity {
         tvVoteMovie.setText(String.valueOf(mVoteAverage));
         tvSinopsisMovie.setText(mSinopsis);
 
-        if (isFavMovie(idMovie)){
+        if (isFavMovie(idMovie)) {
             btnFavorite.setVisibility(View.GONE);
             btnUnfavorite.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             btnUnfavorite.setVisibility(View.GONE);
             btnFavorite.setVisibility(View.VISIBLE);
         }
 
     }
 
-    public boolean isFavMovie(int id){
+    public boolean isFavMovie(int id) {
         Myfavmovie favorite = db.getFavMovie(id);
         if (favorite != null) {
 
@@ -180,14 +211,14 @@ public class DetailActivity extends AppCompatActivity {
             } else {
                 return false;
             }
-        }else{
+        } else {
             return false;
         }
     }
 
     @OnClick(R.id.btn_favorite)
     public void onViewClicked() {
-         db.addFavoriteToDB(idMovie);
+        db.addFavoriteToDB(idMovie);
         btnFavorite.setVisibility(View.GONE);
         btnUnfavorite.setVisibility(View.VISIBLE);
     }
@@ -197,5 +228,34 @@ public class DetailActivity extends AppCompatActivity {
         db.deleteFavMovie(idMovie);
         btnUnfavorite.setVisibility(View.GONE);
         btnFavorite.setVisibility(View.VISIBLE);
+    }
+
+    class ViewPagerAdapter extends FragmentStatePagerAdapter{
+        private final List<Fragment> mFragmentList = new ArrayList<>();
+        private final List<String> mFragmentTitleList = new ArrayList<>();
+
+        public ViewPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return mFragmentList.get(position);
+        }
+
+        @Override
+        public int getCount() {
+            return mFragmentList.size();
+        }
+
+        public void addFragment(Fragment fragment, String title){
+            mFragmentList.add(fragment);
+            mFragmentTitleList.add(title);
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return mFragmentTitleList.get(position);
+        }
     }
 }

@@ -2,6 +2,7 @@ package net.ryanalfi.favmovie.REST;
 
 import net.ryanalfi.favmovie.models.MovieDetailRespone;
 import net.ryanalfi.favmovie.models.MovieRespone;
+import net.ryanalfi.favmovie.models.ReviewRespone;
 import net.ryanalfi.favmovie.models.VideoRespone;
 
 import retrofit2.Call;
@@ -25,4 +26,7 @@ public interface ApiInterface {
 
     @GET("movie/popular")
     Call<MovieRespone> getPopularMovies(@Query("api_key") String apiKey);
+
+    @GET("movie/{id}/reviews")
+    Call<ReviewRespone> getMovieReviews(@Path("id") int id, @Query("api_key") String apiKey);
 }
